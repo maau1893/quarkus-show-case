@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version "1.7.21"
     id "org.jetbrains.kotlin.plugin.allopen" version "1.7.21"
+    id "io.gitlab.arturbosch.detekt" version "1.19.0"
     id 'io.quarkus'
 }
 
@@ -71,3 +72,23 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_11
 }
+
+detekt {
+    source = files("$projectDir/src/main/kotlin")
+    config = files("$projectDir/config/detekt/detekt.yml")
+}
+
+tasks.named("detekt").configure {
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(file("build/reports/detekt/detekt.xml"))
+
+        html.required.set(true)
+        html.outputLocation.set(file("build/reports/detekt/detekt.html"))
+
+        txt.required.set(true)
+        txt.outputLocation.set(file("build/reports/detekt/detekt.txt"))
+    }
+}
+
+tasks.detekt.jvmTarget = JavaVersion.VERSION_11
