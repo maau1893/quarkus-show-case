@@ -1,0 +1,12 @@
+quarkus:
+  datasource:
+    jdbc: false
+    db-kind: postgresql
+    reactive:
+      url: postgresql://localhost:5432/show-case-postgres
+    username: postgres
+    password: postgres
+  liquibase:
+    migrate-at-start: true
+    change-log: db/changeLog.yaml
+    validate-on-migrate: false

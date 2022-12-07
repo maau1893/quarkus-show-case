@@ -1,5 +1,3 @@
 package com.exxeta.showcase.todo.model
 
-class TodoRequestDto {
-
-}
+data class TodoRequestDto(val description: String)
