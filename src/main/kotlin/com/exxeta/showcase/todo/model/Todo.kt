@@ -24,6 +24,9 @@ class Todo {
     @Column(name = "description")
     var description: String = ""
 
+    @Column(name = "done")
+    var isDone: Boolean = false
+
     @CreationTimestamp
     @Column(name = "created_at")
     var createdAt: LocalDateTime = LocalDateTime.now()
