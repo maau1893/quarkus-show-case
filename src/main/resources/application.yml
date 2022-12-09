@@ -3,7 +3,7 @@ quarkus:
     jdbc: false
     db-kind: postgresql
     reactive:
-      url: postgresql://localhost:5432/show-case-postgres
+      url: postgresql://localhost:5436/postgres
     username: postgres
     password: postgres
   liquibase:

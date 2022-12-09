@@ -3,10 +3,13 @@ package com.exxeta.showcase.todo.api
 import com.exxeta.showcase.common.ApiDescriptions
 import com.exxeta.showcase.todo.control.TodoManager
 import com.exxeta.showcase.todo.model.TodoResponseDto
-import com.exxeta.showcase.todo.model.TodoRequestDto
+import com.exxeta.showcase.todo.model.TodoCreateRequestDto
+import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
 import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional
 import io.smallrye.mutiny.Uni
 import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import javax.inject.Inject
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
@@ -25,6 +28,12 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     @ReactiveTransactional
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.GET_TODOS)
+    @APIResponses(
+        value = [
+            APIResponse(responseCode = "200"),
+            APIResponse(responseCode = "204")
+        ]
+    )
     fun getAll(): Uni<List<TodoResponseDto>> {
         return todoManager.getAll()
     }
@@ -34,6 +43,12 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     @ReactiveTransactional
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.GET_TODO)
+    @APIResponses(
+        value = [
+            APIResponse(responseCode = "200"),
+            APIResponse(responseCode = "404")
+        ]
+    )
     fun getTodoById(@PathParam("id") id: String): Uni<TodoResponseDto> {
         return todoManager.getTodoById(id)
     }
@@ -42,6 +57,13 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     @Path("/{id}")
     @ReactiveTransactional
     @Operation(description = ApiDescriptions.DELETE_TODO)
+    @APIResponses(
+        value = [
+            APIResponse(responseCode = "200"),
+            APIResponse(responseCode = "404"),
+            APIResponse(responseCode = "500")
+        ]
+    )
     fun deleteTodoById(@PathParam("id") id: String): Uni<String> {
         return todoManager.deleteTodoById(id)
     }
@@ -51,7 +73,13 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.PUT_TODO)
-    fun createTodo(dto: TodoRequestDto): Uni<TodoResponseDto> {
+    @APIResponses(
+        value = [
+            APIResponse(responseCode = "200"),
+            APIResponse(responseCode = "500")
+        ]
+    )
+    fun createTodo(dto: TodoCreateRequestDto): Uni<TodoResponseDto> {
         return todoManager.createTodo(dto)
     }
 
@@ -61,7 +89,14 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.POST_TODO)
-    fun updateTodo(@PathParam("id") id: String, dto: TodoRequestDto): Uni<TodoResponseDto> {
+    @APIResponses(
+        value = [
+            APIResponse(responseCode = "200"),
+            APIResponse(responseCode = "404"),
+            APIResponse(responseCode = "500")
+        ]
+    )
+    fun updateTodo(@PathParam("id") id: String, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
         return todoManager.updateTodo(id, dto)
     }
 }
