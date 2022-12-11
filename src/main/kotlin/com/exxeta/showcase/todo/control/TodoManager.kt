@@ -1,5 +1,6 @@
 package com.exxeta.showcase.todo.control
 
+import com.exxeta.showcase.common.model.exception.NoContentException
 import com.exxeta.showcase.todo.model.TodoCreateRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
@@ -10,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
-import javax.ws.rs.core.NoContentException
 
 @ApplicationScoped
 class TodoManager @Inject constructor(
@@ -26,7 +26,7 @@ class TodoManager @Inject constructor(
             .collect().asList().invoke { result -> logger.info("Found ${result.size} results") }
             .onFailure().transform {
                 logger.error("No items found")
-                NoContentException("No items found")
+                NoContentException("Not items found")
             }
     }
 

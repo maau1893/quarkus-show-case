@@ -7,6 +7,8 @@ plugins {
     id 'io.quarkus'
 }
 
+apply from: 'versions.gradle'
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -32,19 +34,19 @@ dependencies {
 
     implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-kafka'
 
-    implementation 'org.mapstruct:mapstruct:1.5.3.Final'
-    kapt 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+    implementation "org.mapstruct:mapstruct:$mapstruct_version"
+    kapt "org.mapstruct:mapstruct-processor:$mapstruct_version"
 
     testImplementation 'io.quarkus:quarkus-junit5'
 
-    testImplementation 'io.rest-assured:rest-assured:5.3.0'
-    testImplementation 'io.rest-assured:kotlin-extensions:5.3.0'
+    testImplementation "io.rest-assured:rest-assured:$rest_assured_version"
+    testImplementation "io.rest-assured:kotlin-extensions:$rest_assured_version"
 
-    testImplementation 'io.smallrye.reactive:smallrye-reactive-messaging-in-memory:4.1.0'
+    testImplementation "io.smallrye.reactive:smallrye-reactive-messaging-in-memory:$reactive_messaging_in_memory_version"
 
     testImplementation 'io.quarkus:quarkus-test-h2'
 
-    testImplementation 'io.quarkiverse.mockk:quarkus-junit5-mockk:1.1.1'
+    testImplementation "io.quarkiverse.mockk:quarkus-junit5-mockk:$quarkus_mockk_version"
 }
 
 group 'com.exxeta'

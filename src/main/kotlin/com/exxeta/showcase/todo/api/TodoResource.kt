@@ -1,6 +1,6 @@
 package com.exxeta.showcase.todo.api
 
-import com.exxeta.showcase.common.ApiDescriptions
+import com.exxeta.showcase.common.model.ApiDescriptions
 import com.exxeta.showcase.todo.control.TodoManager
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.TodoCreateRequestDto

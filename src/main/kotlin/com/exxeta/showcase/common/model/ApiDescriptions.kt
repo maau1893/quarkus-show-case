@@ -1,4 +1,4 @@
-package com.exxeta.showcase.common
+package com.exxeta.showcase.common.model
 
 object ApiDescriptions {
 
