@@ -1,12 +1,18 @@
 quarkus:
   datasource:
-    jdbc: false
     db-kind: postgresql
+    jdbc: false
     reactive:
       url: postgresql://localhost:5436/postgres
     username: postgres
     password: postgres
   liquibase:
-    migrate-at-start: true
+    migrate-at-start: false
     change-log: db/changeLog.yaml
     validate-on-migrate: false
+  log:
+    category: "org.jboss.resteasy.reactive.server.handlers.ParameterHandler"
+    level: INFO
+
+liquibase:
+  url: jdbc:postgresql://localhost:5436/postgres

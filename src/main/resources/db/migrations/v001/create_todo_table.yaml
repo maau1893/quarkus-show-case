@@ -1,35 +1,62 @@
 databaseChangeLog:
   - changeSet:
       id: create_todo_table
-      author: exxeta
+      author: dawe1
       changes:
         - createTable:
             tableName: todo
             columns:
               - column:
                   name: id
-                  type: text
-                  constraints:
-                    primaryKey: true
-                    primaryKeyName: pk_todo_id
+                  type: UUID
               - column:
                   name: description
                   type: text
-                  constraints:
-                    nullable: false
               - column:
                   name: done
                   type: boolean
-                  defaultValue: false
-                  constraints:
-                    nullable: false
               - column:
                   name: created_at
                   type: timestamp
-                  constraints:
-                    nullable: false
               - column:
                   name: updated_at
                   type: timestamp
-                  constraints:
-                    nullable: false
+        - addNotNullConstraint:
+            constraintName: pk_not_null_todo_id
+            columnName: id
+            tableName: todo
+        - addUniqueConstraint:
+            constraintName: pk_unique_todo_id
+            columnNames: id
+            tableName: todo
+        - addPrimaryKey:
+            constraintName: pk_todo_id
+            columnNames: id
+            tableName: todo
+        - addNotNullConstraint:
+            constraintName: pk_not_null_todo_description
+            columnDataType: text
+            columnName: description
+            tableName: todo
+        - addNotNullConstraint:
+            constraintName: pk_not_null_todo_done
+            columnDataType: boolean
+            columnName: done
+            tableName: todo
+        - addNotNullConstraint:
+            constraintName: pk_not_null_todo_created_at
+            columnDataType: timestamp
+            columnName: created_at
+            tableName: todo
+        - addNotNullConstraint:
+            constraintName: pk_not_null_todo_updated_at
+            columnDataType: timestamp
+            columnName: updated_at
+            tableName: todo
+        - addDefaultValue:
+            columnName: done
+            defaultValueBoolean: false
+            tableName: todo
+      rollback:
+        - dropTable:
+            tableName: todo

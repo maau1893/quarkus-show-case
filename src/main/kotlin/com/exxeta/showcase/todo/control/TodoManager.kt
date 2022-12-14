@@ -1,6 +1,5 @@
 package com.exxeta.showcase.todo.control
 
-import com.exxeta.showcase.common.model.exception.NoContentException
 import com.exxeta.showcase.todo.model.TodoCreateRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
@@ -22,12 +21,8 @@ class TodoManager @Inject constructor(
     fun getAll(): Uni<List<TodoResponseDto>> {
         logger.info("Requesting all Todos")
         return todoRepository.findAll().stream()
-            .onCompletion().ifEmpty().fail().map(todoMapper::toResponseDto)
+            .map(todoMapper::toResponseDto)
             .collect().asList().invoke { result -> logger.info("Found ${result.size} results") }
-            .onFailure().transform {
-                logger.error("No items found")
-                NoContentException("Not items found")
-            }
     }
 
     fun getTodoById(id: String): Uni<TodoResponseDto> {
@@ -35,7 +30,7 @@ class TodoManager @Inject constructor(
         return todoRepository.findById(id).map(todoMapper::toResponseDto)
             .invoke { _ -> logger.info("Todo for id $id successfully found") }
             .onFailure().transform {
-            logger.error("Failed to fetch Todo with id $id")
+                logger.error("Failed to fetch Todo with id $id", it)
                 NotFoundException("Todo with id $id does not exist")
             }
     }
@@ -45,7 +40,7 @@ class TodoManager @Inject constructor(
         return todoRepository.deleteById(id)
             .invoke { _ -> logger.info("Todo with id $id successfully deleted") }
             .onFailure().transform {
-                logger.error("Failed to delete Todo with id $id")
+                logger.error("Failed to delete Todo with id $id", it)
                 NotFoundException("Todo with id $id does not exist")
             }
     }
@@ -53,9 +48,9 @@ class TodoManager @Inject constructor(
     fun createTodo(dto: TodoCreateRequestDto): Uni<TodoResponseDto> {
         logger.info("Attempting to create Todo")
         return todoRepository.persistAndFlush(todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
-            .invoke { todo -> logger.info("Todo successfully created - Id: ${todo.id}") }
+            .invoke { todo -> logger.info("Todo successfully created with id ${todo.id}") }
             .onFailure().transform {
-                logger.error("Failed to create Todo")
+                logger.error("Failed to create Todo", it)
                 InternalServerErrorException("Failed to create Todo")
             }
     }
@@ -65,7 +60,7 @@ class TodoManager @Inject constructor(
         return todoRepository.updateAndFlush(id, todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
             .invoke { _ -> logger.info("Todo with id $id successfully updated") }
             .onFailure().transform {
-                logger.error("Failed to update Todo with id $id")
+                logger.error("Failed to update Todo with id $id", it)
                 InternalServerErrorException("Failed to update Todo with id $id")
             }
     }

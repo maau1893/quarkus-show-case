@@ -4,10 +4,10 @@ import io.quarkus.runtime.annotations.RegisterForReflection
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
@@ -17,9 +17,9 @@ import javax.persistence.Table
 class Todo {
 
     @Id
+    @GeneratedValue
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: String = ""
+    lateinit var id: UUID
 
     @Column(name = "description")
     var description: String = ""
@@ -29,9 +29,9 @@ class Todo {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now()
+    lateinit var createdAt: LocalDateTime
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    lateinit var updatedAt: LocalDateTime
 }

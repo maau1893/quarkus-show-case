@@ -1,3 +1,5 @@
 package com.exxeta.showcase.todo.model
 
-data class TodoCreateRequestDto(val description: String)
+import javax.validation.constraints.NotBlank
+
+data class TodoCreateRequestDto(@NotBlank val description: String = "")
