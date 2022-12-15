@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "logger": "https://deno.land/std@0.168.0/log/mod.ts",
+    "oak": "https://deno.land/x/oak@v11.1.0/mod.ts",
+    "oak/logger": "https://deno.land/x/oak_logger@1.0.0/mod.ts",
+    "kafkajs": "npm:kafkajs@^2.2.3"
+  }
+}
