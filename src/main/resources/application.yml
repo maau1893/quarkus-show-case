@@ -13,6 +13,23 @@ quarkus:
   log:
     category: "org.jboss.resteasy.reactive.server.handlers.ParameterHandler"
     level: INFO
+  rest-client:
+    dummy-api:
+      url: localhost:3000
+
+mp:
+  messaging:
+    outgoing:
+      show-case-to-dummy:
+        connector: smallrye-kafka
+        topic: "show-case-to-dummy"
+        value:
+          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
+    incoming:
+      dummy-to-show-case:
+        connector: smallrye-kafka
+        topic: "dummy-to-show-case"
+        value-deserialization-failure-handler: "consumer-failure-handler"
 
 liquibase:
   url: jdbc:postgresql://localhost:5436/postgres

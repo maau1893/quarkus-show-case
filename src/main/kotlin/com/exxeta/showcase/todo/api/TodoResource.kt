@@ -68,7 +68,7 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
         return todoManager.deleteTodoById(id)
     }
 
-    @PUT
+    @POST
     @ReactiveTransactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -83,7 +83,7 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
         return todoManager.createTodo(dto)
     }
 
-    @POST
+    @PUT
     @Path("/{id}")
     @ReactiveTransactional
     @Consumes(MediaType.APPLICATION_JSON)

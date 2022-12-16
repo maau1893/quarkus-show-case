@@ -7,7 +7,6 @@ import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
 import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
-import liquibase.resource.ResourceAccessor
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,7 +14,7 @@ import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
 
 @ApplicationScoped
-class AppLifecycle(
+class ApplicationLifecycle(
     @ConfigProperty(name = "liquibase.url")
     private val datasourceUrl: String,
     @ConfigProperty(name = "quarkus.datasource.username")
@@ -26,7 +25,7 @@ class AppLifecycle(
     private val changeLogLocation: String
 ) {
 
-    private val logger: Logger = LoggerFactory.getLogger(AppLifecycle::class.simpleName)
+    private val logger: Logger = LoggerFactory.getLogger(ApplicationLifecycle::class.simpleName)
 
     fun onStart(@Observes ev: StartupEvent) {
         logger.info("The application is starting...")
@@ -40,8 +39,7 @@ class AppLifecycle(
     @Throws(LiquibaseException::class)
     private fun runLiquibaseMigration() {
         logger.info("Running database migration script...")
-        val resourceAccessor: ResourceAccessor =
-            ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
+        val resourceAccessor = ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
         val conn = DatabaseFactory.getInstance()
             .openConnection(datasourceUrl, datasourceUsername, datasourcePassword, null, resourceAccessor)
         Liquibase(changeLogLocation, resourceAccessor, conn).use { liquibase ->

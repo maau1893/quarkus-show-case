@@ -11,6 +11,7 @@ import org.mapstruct.Mapping
 @Mapper
 interface TodoMapper {
 
+    @Mapping(source = "done", target = "isDone")
     fun toResponseDto(entity: Todo): TodoResponseDto
 
     @BeanMapping(ignoreByDefault = true)
