@@ -4,6 +4,7 @@ import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.runtime.StartupEvent
 import liquibase.LabelExpression
 import liquibase.Liquibase
+import liquibase.database.DatabaseConnection
 import liquibase.database.DatabaseFactory
 import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
@@ -15,14 +16,10 @@ import javax.enterprise.event.Observes
 
 @ApplicationScoped
 class ApplicationLifecycle(
-    @ConfigProperty(name = "liquibase.url")
-    private val datasourceUrl: String,
-    @ConfigProperty(name = "quarkus.datasource.username")
-    private val datasourceUsername: String,
-    @ConfigProperty(name = "quarkus.datasource.password")
-    private val datasourcePassword: String,
-    @ConfigProperty(name = "quarkus.liquibase.change-log")
-    private val changeLogLocation: String
+    @ConfigProperty(name = "liquibase.url") private val datasourceUrl: String,
+    @ConfigProperty(name = "quarkus.datasource.username") private val datasourceUsername: String,
+    @ConfigProperty(name = "quarkus.datasource.password") private val datasourcePassword: String,
+    @ConfigProperty(name = "quarkus.liquibase.change-log") private val changeLogLocation: String
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(ApplicationLifecycle::class.simpleName)
@@ -39,11 +36,20 @@ class ApplicationLifecycle(
     @Throws(LiquibaseException::class)
     private fun runLiquibaseMigration() {
         logger.info("Running database migration script...")
-        val resourceAccessor = ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
-        val conn = DatabaseFactory.getInstance()
-            .openConnection(datasourceUrl, datasourceUsername, datasourcePassword, null, resourceAccessor)
-        Liquibase(changeLogLocation, resourceAccessor, conn).use { liquibase ->
+        var resourceAccessor: ClassLoaderResourceAccessor? = null
+        var connection: DatabaseConnection? = null
+        var liquibase: Liquibase? = null
+        try {
+            resourceAccessor = ClassLoaderResourceAccessor(Thread.currentThread().contextClassLoader)
+            connection = DatabaseFactory.getInstance()
+                .openConnection(datasourceUrl, datasourceUsername, datasourcePassword, null, resourceAccessor)
+
+            liquibase = Liquibase(changeLogLocation, resourceAccessor, connection)
             liquibase.update(null, LabelExpression())
+        } finally {
+            resourceAccessor?.close()
+            connection?.close()
+            liquibase?.close()
         }
     }
 }
