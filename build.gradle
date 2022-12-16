@@ -7,14 +7,18 @@ plugins {
     id 'io.quarkus'
 }
 
-apply from: 'versions.gradle'
-
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
+    def mapstruct_version = "1.5.3.Final"
+    def rest_assured_version = "5.3.0"
+    def reactive_messaging_in_memory_version = "4.1.0"
+    def quarkus_mockk_version = "1.1.1"
+    def postgres_version = "42.5.1"
+
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-kotlin'
     implementation 'io.quarkus:quarkus-arc'
@@ -29,7 +33,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-reactive-panache-kotlin'
     implementation 'io.quarkus:quarkus-reactive-pg-client'
     implementation 'io.quarkus:quarkus-liquibase'
-    implementation 'org.postgresql:postgresql:42.5.1'
+    implementation "org.postgresql:postgresql:$postgres_version"
 
     implementation 'io.quarkus:quarkus-smallrye-opentracing'
 
