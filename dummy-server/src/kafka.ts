@@ -1,5 +1,5 @@
-import { Kafka, ProducerRecord } from 'kafkajs';
-import * as logger from 'logger';
+import { Kafka, ProducerRecord } from '../deps.ts';
+import { logger } from '../deps.ts';
 import MessageDto from './MessageDto.ts';
 
 const KAFKA_HOST = Deno.env.get('KAFKA_HOST') ?? 'localhost:9092';

@@ -1,5 +1,5 @@
-import { Router } from 'oak';
-import * as logger from 'logger';
+import { Router } from '../deps.ts';
+import { logger } from '../deps.ts';
 import { sendKafkaMessageToShowCase } from './kafka.ts';
 import MessageDto from './MessageDto.ts';
 

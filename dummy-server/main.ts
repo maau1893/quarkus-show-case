@@ -1,6 +1,6 @@
-import { Application } from 'oak';
-import oakLogger from 'oak/logger';
-import * as logger from 'logger';
+import { Application } from './deps.ts';
+import { oakLogger } from './deps.ts';
+import { logger } from './deps.ts';
 import router from './src/routes.ts';
 import { connectKafka, gracefulShutdownKafka } from './src/kafka.ts';
 

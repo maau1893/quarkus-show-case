@@ -6,12 +6,13 @@ ENV KAFKA_SSL=false
 
 WORKDIR /app
 
-COPY import_map.json .
+COPY deps.ts .
 COPY deno.json .
+RUN deno cache --reload deps.ts
+
 COPY main.ts .
 COPY src/ src/
 
-RUN deno cache main.ts
 
 EXPOSE $PORT
 
