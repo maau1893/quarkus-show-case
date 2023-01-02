@@ -16,19 +16,18 @@ class MessageManager @Inject constructor(
     @RestClient private val messageService: MessageService,
     private val messagePublisher: MessagePublisher,
 ) {
-
     private val logger: Logger = LoggerFactory.getLogger(MessageManager::class.simpleName)
 
     fun handleIncomingMessage(dto: MessageRequestDto): Uni<Void> {
         logger.info("Received message of type ${dto.messageType} and content ${dto.content}")
-        return Uni.createFrom().nullItem()
+        return Uni.createFrom().voidItem()
     }
 
     fun sendOutgoingMessage(dto: MessageRequestDto): Uni<Void> {
         val messageType = dto.messageType
         val content = dto.content
         logger.info("Sending message of type $messageType and content $content to the dummy service")
-        return when(messageType) {
+        return when (messageType) {
             MessageType.REST -> {
                 logger.info("Sending REST message $content to dummy service")
                 messageService.sendMessage(dto)

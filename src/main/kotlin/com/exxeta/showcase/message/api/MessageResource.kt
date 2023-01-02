@@ -1,4 +1,4 @@
-package com.exxeta.showcase.message
+package com.exxeta.showcase.message.api
 
 import com.exxeta.showcase.common.model.ApiDescriptions
 import com.exxeta.showcase.message.control.MessageManager

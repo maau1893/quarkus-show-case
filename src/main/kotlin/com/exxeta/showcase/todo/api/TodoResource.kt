@@ -21,7 +21,7 @@ import javax.ws.rs.PathParam
 import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
-@Path("/todos")
+@Path("todos")
 class TodoResource @Inject constructor(private val todoManager: TodoManager) {
 
     @GET
@@ -39,7 +39,7 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     @ReactiveTransactional
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.GET_TODO)
@@ -54,7 +54,7 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     @ReactiveTransactional
     @Operation(description = ApiDescriptions.DELETE_TODO)
     @APIResponses(
@@ -84,7 +84,7 @@ class TodoResource @Inject constructor(private val todoManager: TodoManager) {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     @ReactiveTransactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

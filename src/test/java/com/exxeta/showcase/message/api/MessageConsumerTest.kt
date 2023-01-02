@@ -26,7 +26,7 @@ internal class MessageConsumerTest {
     fun consumeMessage() {
         val dto = MessageRequestDto("Test content", MessageType.KAFKA)
 
-        val response = Uni.createFrom().nullItem<Void>()
+        val response = Uni.createFrom().voidItem()
 
         every { messageManager.handleIncomingMessage(dto) } returns response
 

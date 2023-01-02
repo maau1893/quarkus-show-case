@@ -1,5 +1,6 @@
-package com.exxeta.showcase.message
+package com.exxeta.showcase.message.api
 
+import com.exxeta.showcase.message.MessageType
 import com.exxeta.showcase.message.control.MessageManager
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.mockk.every
@@ -28,7 +29,7 @@ internal class MessageResourceTest {
     fun logMessage() {
         val dto = MessageRequestDto("Test content", MessageType.REST)
 
-        val response = Uni.createFrom().nullItem<Void>()
+        val response = Uni.createFrom().voidItem()
 
         every { messageManager.handleIncomingMessage(dto) } returns response
 
@@ -52,7 +53,7 @@ internal class MessageResourceTest {
     fun sendMessageToDummyService() {
         val dto = MessageRequestDto("Test content", MessageType.REST)
 
-        val response = Uni.createFrom().nullItem<Void>()
+        val response = Uni.createFrom().voidItem()
 
         every { messageManager.sendOutgoingMessage(dto) } returns response
 

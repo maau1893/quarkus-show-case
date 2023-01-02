@@ -1,3 +1,12 @@
 package com.exxeta.showcase.todo.model
 
-data class TodoUpdateRequestDto(val description: String, val isDone: Boolean)
+import com.fasterxml.jackson.annotation.JsonProperty
+import javax.validation.constraints.NotBlank
+
+data class TodoUpdateRequestDto(
+    @NotBlank
+    val description: String,
+    @NotBlank
+    @field:JsonProperty("isDone")
+    val isDone: Boolean,
+)

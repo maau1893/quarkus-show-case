@@ -1,6 +1,5 @@
 package com.exxeta.showcase.common.control
 
-import io.quarkus.test.junit.QuarkusTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,7 +8,6 @@ import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 
-@QuarkusTest
 internal class GlobalExceptionHandlerTest {
 
     private lateinit var handler: GlobalExceptionHandler
