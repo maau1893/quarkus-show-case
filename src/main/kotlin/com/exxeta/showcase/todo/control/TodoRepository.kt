@@ -1,20 +1,12 @@
 package com.exxeta.showcase.todo.control
 
 import com.exxeta.showcase.todo.model.Todo
-import io.quarkus.hibernate.reactive.panache.kotlin.PanacheRepository
+import io.quarkus.hibernate.reactive.panache.kotlin.PanacheRepositoryBase
 import io.smallrye.mutiny.Uni
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class TodoRepository : PanacheRepository<Todo> {
-
-    fun findById(id: String): Uni<Todo> {
-        return this.find("id", id).singleResult().onFailure().recoverWithNull()
-    }
-
-    fun deleteById(id: String): Uni<String> {
-        return findById(id).onItem().transform { entity -> this.delete(entity) }.map { id }
-    }
+class TodoRepository : PanacheRepositoryBase<Todo, String> {
 
     fun updateAndFlush(id: String, todo: Todo): Uni<Todo> {
         return findById(id).onItem().transform { entity ->

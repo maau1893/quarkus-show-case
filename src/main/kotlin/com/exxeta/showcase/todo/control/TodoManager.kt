@@ -4,6 +4,7 @@ import com.exxeta.showcase.todo.model.TodoCreateRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
 import io.smallrye.mutiny.Uni
+import io.smallrye.mutiny.unchecked.Unchecked
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
@@ -38,11 +39,16 @@ class TodoManager @Inject constructor(
     fun deleteTodoById(id: String): Uni<String> {
         logger.info("Attempting to delete Todo with id $id")
         return todoRepository.deleteById(id)
+            .onItem()
+            .invoke(Unchecked.consumer { result ->
+                if(!result) {
+                    logger.error("Failed to delete Todo with id $id")
+                    throw NotFoundException("Todo with id $id does not exist")
+                }
+            })
+            .onItem()
+            .transform { id }
             .invoke { _ -> logger.info("Todo with id $id successfully deleted") }
-            .onFailure().transform {
-                logger.error("Failed to delete Todo with id $id", it)
-                NotFoundException("Todo with id $id does not exist")
-            }
     }
 
     fun createTodo(dto: TodoCreateRequestDto): Uni<TodoResponseDto> {
