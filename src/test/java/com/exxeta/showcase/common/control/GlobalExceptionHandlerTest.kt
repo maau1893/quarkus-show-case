@@ -3,6 +3,7 @@ package com.exxeta.showcase.common.control
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
@@ -14,7 +15,7 @@ internal class GlobalExceptionHandlerTest {
 
     @BeforeEach
     fun setUp() {
-        handler = GlobalExceptionHandler()
+        handler = GlobalExceptionHandler(LoggerFactory.getLogger(GlobalExceptionHandler::class.java))
     }
 
     @Test

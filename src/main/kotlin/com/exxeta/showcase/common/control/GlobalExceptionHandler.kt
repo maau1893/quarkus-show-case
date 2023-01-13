@@ -1,16 +1,13 @@
 package com.exxeta.showcase.common.control
 
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.ws.rs.WebApplicationException
 import javax.ws.rs.core.Response
 import javax.ws.rs.ext.ExceptionMapper
 import javax.ws.rs.ext.Provider
 
 @Provider
-class GlobalExceptionHandler : ExceptionMapper<Exception> {
-
-    private val logger: Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.simpleName)
+class GlobalExceptionHandler(private val logger: Logger) : ExceptionMapper<Exception> {
 
     override fun toResponse(exception: Exception?): Response {
         if (exception is WebApplicationException) {

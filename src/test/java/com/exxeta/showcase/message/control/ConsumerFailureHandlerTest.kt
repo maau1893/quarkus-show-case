@@ -6,17 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 
 internal class ConsumerFailureHandlerTest {
 
     private lateinit var handler: ConsumerFailureHandler
 
-    private lateinit var objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper = ObjectMapper()
 
     @BeforeEach
     fun setUp() {
-        handler = ConsumerFailureHandler()
-        objectMapper = ObjectMapper()
+        handler = ConsumerFailureHandler(LoggerFactory.getLogger(ConsumerFailureHandler::class.java))
     }
 
     @Test

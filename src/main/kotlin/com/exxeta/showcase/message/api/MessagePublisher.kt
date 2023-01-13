@@ -5,17 +5,14 @@ import io.smallrye.mutiny.Uni
 import io.smallrye.reactive.messaging.MutinyEmitter
 import org.eclipse.microprofile.reactive.messaging.Channel
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 
 @ApplicationScoped
-class MessagePublisher @Inject constructor(
+class MessagePublisher(
     @Channel("show-case-to-dummy")
     private val messageEmitter: MutinyEmitter<MessageRequestDto>,
+    private val logger: Logger,
 ) {
-
-    private val logger: Logger = LoggerFactory.getLogger(MessagePublisher::class.simpleName)
 
     fun sendMessage(dto: MessageRequestDto): Uni<Void> {
         logger.info("Sending message ${dto.content} via Kafka")

@@ -4,14 +4,11 @@ import io.smallrye.common.annotation.Identifier
 import io.smallrye.reactive.messaging.kafka.DeserializationFailureHandler
 import org.apache.kafka.common.header.Headers
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
 @Identifier("consumer-failure-handler")
-class ConsumerFailureHandler : DeserializationFailureHandler<Any> {
-
-    private val logger: Logger = LoggerFactory.getLogger(ConsumerFailureHandler::class.simpleName)
+class ConsumerFailureHandler(private val logger: Logger) : DeserializationFailureHandler<Any> {
 
     override fun handleDeserializationFailure(
         topic: String?,

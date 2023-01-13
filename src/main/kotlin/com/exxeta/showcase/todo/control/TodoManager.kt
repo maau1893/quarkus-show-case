@@ -6,18 +6,16 @@ import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.unchecked.Unchecked
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
-import javax.inject.Inject
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 @ApplicationScoped
-class TodoManager @Inject constructor(
+class TodoManager(
     private val todoRepository: TodoRepository,
     private val todoMapper: TodoMapper,
+    private val logger: Logger,
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(TodoManager::class.simpleName)
 
     fun getAll(): Uni<List<TodoResponseDto>> {
         logger.info("Requesting all Todos")
@@ -41,7 +39,7 @@ class TodoManager @Inject constructor(
         return todoRepository.deleteById(id)
             .onItem()
             .invoke(Unchecked.consumer { result ->
-                if(!result) {
+                if (!result) {
                     logger.error("Failed to delete Todo with id $id")
                     throw NotFoundException("Todo with id $id does not exist")
                 }

@@ -9,7 +9,6 @@ import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.event.Observes
 
@@ -18,10 +17,9 @@ class ApplicationLifecycle(
     @ConfigProperty(name = "liquibase.url") private val datasourceUrl: String,
     @ConfigProperty(name = "quarkus.datasource.username") private val datasourceUsername: String,
     @ConfigProperty(name = "quarkus.datasource.password") private val datasourcePassword: String,
-    @ConfigProperty(name = "quarkus.liquibase.change-log") private val changeLogLocation: String
+    @ConfigProperty(name = "quarkus.liquibase.change-log") private val changeLogLocation: String,
+    private val logger: Logger,
 ) {
-
-    private val logger: Logger = LoggerFactory.getLogger(ApplicationLifecycle::class.simpleName)
 
     fun onStart(@Observes ev: StartupEvent) {
         logger.info("The application is starting...")
