@@ -5,28 +5,30 @@ import com.exxeta.showcase.message.api.MessagePublisher
 import com.exxeta.showcase.message.api.MessageService
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
-import io.quarkiverse.test.junit.mockk.InjectMock
-import io.quarkus.test.junit.QuarkusTest
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber
-import org.eclipse.microprofile.rest.client.inject.RestClient
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import javax.inject.Inject
+import org.slf4j.LoggerFactory
 
-@QuarkusTest
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class MessageManagerTest {
 
-    @Inject
     private lateinit var messageManager: MessageManager
 
-    @InjectMock
-    @RestClient
     private lateinit var messageService: MessageService
 
-    @InjectMock
     private lateinit var messagePublisher: MessagePublisher
+
+    @BeforeEach
+    fun beforeEach() {
+        messageService = mockk()
+        messagePublisher = mockk()
+        messageManager =
+            MessageManager(messageService, messagePublisher, LoggerFactory.getLogger(MessageManager::class.java))
+    }
 
     @Test
     fun handleIncomingMessage() {

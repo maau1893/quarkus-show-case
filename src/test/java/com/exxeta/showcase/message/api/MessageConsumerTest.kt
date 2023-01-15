@@ -4,7 +4,7 @@ import com.exxeta.showcase.message.MessageType
 import com.exxeta.showcase.message.control.MessageManager
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.mockk.every
-import io.mockk.mockkClass
+import io.mockk.mockk
 import io.mockk.verify
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber
@@ -21,7 +21,7 @@ internal class MessageConsumerTest {
 
     @BeforeEach
     fun setUp() {
-        messageManagerMock = mockkClass(MessageManager::class)
+        messageManagerMock = mockk()
         messageConsumer = MessageConsumer(messageManagerMock, LoggerFactory.getLogger(MessageConsumer::class.java))
     }
 
