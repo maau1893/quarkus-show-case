@@ -10,6 +10,7 @@ import io.smallrye.mutiny.Uni
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
+import java.util.UUID
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -48,7 +49,7 @@ class TodoResource(private val todoManager: TodoManager) {
             APIResponse(responseCode = "404")
         ]
     )
-    fun getTodoById(@PathParam("id") id: String): Uni<TodoResponseDto> {
+    fun getTodoById(@PathParam("id") id: UUID): Uni<TodoResponseDto> {
         return todoManager.getTodoById(id)
     }
 
@@ -63,7 +64,7 @@ class TodoResource(private val todoManager: TodoManager) {
             APIResponse(responseCode = "500")
         ]
     )
-    fun deleteTodoById(@PathParam("id") id: String): Uni<String> {
+    fun deleteTodoById(@PathParam("id") id: UUID): Uni<UUID> {
         return todoManager.deleteTodoById(id)
     }
 
@@ -95,7 +96,7 @@ class TodoResource(private val todoManager: TodoManager) {
             APIResponse(responseCode = "500")
         ]
     )
-    fun updateTodo(@PathParam("id") id: String, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
+    fun updateTodo(@PathParam("id") id: UUID, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
         return todoManager.updateTodo(id, dto)
     }
 }

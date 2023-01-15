@@ -6,6 +6,7 @@ import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.unchecked.Unchecked
 import org.slf4j.Logger
+import java.util.UUID
 import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
@@ -24,7 +25,7 @@ class TodoManager(
             .collect().asList().invoke { result -> logger.info("Found ${result.size} results") }
     }
 
-    fun getTodoById(id: String): Uni<TodoResponseDto> {
+    fun getTodoById(id: UUID): Uni<TodoResponseDto> {
         logger.info("Requesting Todo with id $id")
         return todoRepository.findById(id).map(todoMapper::toResponseDto)
             .invoke { _ -> logger.info("Todo for id $id successfully found") }
@@ -34,7 +35,7 @@ class TodoManager(
             }
     }
 
-    fun deleteTodoById(id: String): Uni<String> {
+    fun deleteTodoById(id: UUID): Uni<UUID> {
         logger.info("Attempting to delete Todo with id $id")
         return todoRepository.deleteById(id)
             .onItem()
@@ -59,7 +60,7 @@ class TodoManager(
             }
     }
 
-    fun updateTodo(id: String, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
+    fun updateTodo(id: UUID, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
         logger.info("Attempting to update Todo with id $id")
         return todoRepository.updateAndFlush(id, todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
             .invoke { _ -> logger.info("Todo with id $id successfully updated") }

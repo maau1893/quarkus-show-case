@@ -1,25 +1,33 @@
 package com.exxeta.showcase.todo.control
 
 import com.exxeta.showcase.todo.model.Todo
-import io.quarkiverse.test.junit.mockk.InjectMock
-import io.quarkiverse.test.junit.mockk.InjectSpy
-import io.quarkus.test.junit.QuarkusTest
+import com.exxeta.showcase.todo.model.TodoCreateRequestDto
+import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
+import io.mockk.clearMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import io.quarkus.hibernate.reactive.panache.kotlin.PanacheQuery
+import io.smallrye.mutiny.Multi
+import io.smallrye.mutiny.Uni
+import io.smallrye.mutiny.helpers.test.UniAssertSubscriber
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.inject.Inject
+import javax.ws.rs.InternalServerErrorException
+import javax.ws.rs.NotFoundException
 
-@QuarkusTest
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class TodoManagerTest {
-    
-    @Inject
+
     private lateinit var todoManager: TodoManager
 
-    @InjectMock
     private lateinit var todoRepository: TodoRepository
 
-    @InjectSpy
     private lateinit var todoMapper: TodoMapper
 
     private val todo: Todo = Todo().apply {
@@ -30,34 +38,130 @@ internal class TodoManagerTest {
         this.description = "Test description"
     }
 
+    @BeforeEach
+    fun beforeEach() {
+        todoRepository = mockk()
+        todoMapper = mockk(relaxed = true)
+        todoManager = TodoManager(todoRepository, todoMapper, LoggerFactory.getLogger(TodoManager::class.java))
+    }
+
+    @AfterEach
+    fun afterEach() {
+        clearMocks(todoRepository, todoMapper)
+    }
+
     @Test
     fun getAll() {
-        /*val expected = listOf(todoMapper.toResponseDto(todo))
+        val item = todoMapper.toResponseDto(todo)
+        val expected = listOf(item, item)
 
-        every { todoRepository.findAll() } returns mockk()
+        val queryMock = mockk<PanacheQuery<Todo>>()
+
+        every { todoRepository.findAll() } returns queryMock
+        every { queryMock.stream() } returns Multi.createFrom().items(todo, todo)
 
         val subscriber = todoManager.getAll().subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
 
-        verify { todoMapper.toResponseDto(todo) }
+        // Once for the expected value and twice for the getAll() mapping
+        verify(exactly = 3) { todoMapper.toResponseDto(todo) }
 
-        Assertions.assertEquals(expected, subscriber.item)*/
+        Assertions.assertEquals(expected, subscriber.item)
     }
 
     @Test
     fun getTodoById() {
+        val expected = todoMapper.toResponseDto(todo)
+
+        every { todoRepository.findById(todo.id) } returns Uni.createFrom().item(todo)
+
+        val subscriber = todoManager.getTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertCompleted()
+
+        // Once for the expected value and once for the getTodoById() mapping
+        verify(exactly = 2) { todoMapper.toResponseDto(todo) }
+
+        Assertions.assertEquals(expected, subscriber.item)
     }
 
     @Test
-    fun deleteTodoById() {
+    fun `deleteTodoById with success`() {
+        every { todoRepository.deleteById(todo.id) } returns Uni.createFrom().item(true)
+
+        val subscriber = todoManager.deleteTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertCompleted()
+
+        Assertions.assertEquals(todo.id, subscriber.item)
     }
 
     @Test
-    fun createTodo() {
+    fun `deleteTodoById with failure`() {
+        every { todoRepository.deleteById(todo.id) } returns Uni.createFrom().item(false)
+
+        val subscriber = todoManager.deleteTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertFailedWith(NotFoundException::class.java)
     }
 
     @Test
-    fun updateTodo() {
+    fun `createTodo with success`() {
+        val dto = TodoCreateRequestDto(description = "Test description")
+        val expected = todoMapper.toResponseDto(todo)
+
+        every { todoMapper.toEntity(dto) } returns todo
+        every { todoRepository.persistAndFlush(todo) } returns Uni.createFrom().item(todo)
+
+        val subscriber = todoManager.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertCompleted()
+
+        Assertions.assertEquals(expected, subscriber.item)
+    }
+
+    @Test
+    fun `createTodo with failure`() {
+        val dto = TodoCreateRequestDto(description = "Test description")
+
+        every { todoMapper.toEntity(dto) } returns todo
+        every { todoRepository.persistAndFlush(todo) } returns Uni.createFrom()
+            .failure(IllegalStateException("Test exception"))
+
+        val subscriber = todoManager.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertFailedWith(InternalServerErrorException::class.java)
+
+        Assertions.assertNull(subscriber.item)
+    }
+
+    @Test
+    fun `updateTodo with success`() {
+        val dto = TodoUpdateRequestDto(description = "Test description", isDone = true)
+        val expected = todoMapper.toResponseDto(todo)
+
+        every { todoMapper.toEntity(dto) } returns todo
+        every { todoRepository.updateAndFlush(todo.id, todo) } returns Uni.createFrom().item(todo)
+
+        val subscriber = todoManager.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertCompleted()
+
+        Assertions.assertEquals(expected, subscriber.item)
+    }
+
+    @Test
+    fun `updateTodo with failure`() {
+        val dto = TodoUpdateRequestDto(description = "Test description", isDone = true)
+
+        every { todoMapper.toEntity(dto) } returns todo
+        every { todoRepository.updateAndFlush(todo.id, todo) } returns Uni.createFrom().failure(NotFoundException("Entity not found"))
+
+        val subscriber = todoManager.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+
+        subscriber.assertFailedWith(InternalServerErrorException::class.java)
+
+        Assertions.assertNull(subscriber.item)
     }
 }

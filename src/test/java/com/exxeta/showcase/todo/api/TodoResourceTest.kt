@@ -60,14 +60,14 @@ internal class TodoResourceTest {
 
     @Test
     fun getTodoById() {
-        val id = todoResponseDto.id.toString()
+        val id = todoResponseDto.id
 
         val response = Uni.createFrom().item(todoResponseDto)
 
         every { todoManager.getTodoById(id) } returns response
 
         val result = When {
-            get(id)
+            get(id.toString())
         } Then {
             statusCode(Response.Status.OK.statusCode)
             contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +82,7 @@ internal class TodoResourceTest {
 
     @Test
     fun deleteTodoById() {
-        val id = UUID.randomUUID().toString()
+        val id = UUID.randomUUID()
 
         every { todoManager.deleteTodoById(id) } returns Uni.createFrom().item(id)
 
@@ -90,9 +90,9 @@ internal class TodoResourceTest {
             delete("{id}", id)
         } Then {
             statusCode(Response.Status.OK.statusCode)
-            contentType(MediaType.TEXT_PLAIN)
+            contentType(MediaType.APPLICATION_JSON)
         } Extract {
-            asString()
+            `as`(UUID::class.java)
         }
 
         verify { todoManager.deleteTodoById(id) }
@@ -125,7 +125,7 @@ internal class TodoResourceTest {
 
     @Test
     fun updateTodo() {
-        val id = todoResponseDto.id.toString()
+        val id = todoResponseDto.id
 
         val requestDto = TodoUpdateRequestDto(description = "Test description 2", isDone = true)
 
