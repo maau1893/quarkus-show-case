@@ -1,7 +1,7 @@
 package com.exxeta.showcase.message.api
 
 import com.exxeta.showcase.message.MessageType
-import com.exxeta.showcase.message.control.MessageManager
+import com.exxeta.showcase.message.control.MessageService
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.mockk.every
 import io.mockk.mockk
@@ -17,12 +17,12 @@ internal class MessageConsumerTest {
 
     private lateinit var messageConsumer: MessageConsumer
 
-    private lateinit var messageManagerMock: MessageManager
+    private lateinit var messageServiceMock: MessageService
 
     @BeforeEach
     fun setUp() {
-        messageManagerMock = mockk()
-        messageConsumer = MessageConsumer(messageManagerMock, LoggerFactory.getLogger(MessageConsumer::class.java))
+        messageServiceMock = mockk()
+        messageConsumer = MessageConsumer(messageServiceMock, LoggerFactory.getLogger(MessageConsumer::class.java))
     }
 
     @Test
@@ -31,11 +31,11 @@ internal class MessageConsumerTest {
 
         val response = Uni.createFrom().voidItem()
 
-        every { messageManagerMock.handleIncomingMessage(dto) } returns response
+        every { messageServiceMock.handleIncomingMessage(dto) } returns response
 
         val subscriber = messageConsumer.consumeMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
-        verify { messageManagerMock.handleIncomingMessage(dto) }
+        verify { messageServiceMock.handleIncomingMessage(dto) }
 
         subscriber.assertCompleted()
     }

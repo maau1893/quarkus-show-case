@@ -1,7 +1,7 @@
 package com.exxeta.showcase.todo.api
 
 import com.exxeta.showcase.common.model.ApiDescriptions
-import com.exxeta.showcase.todo.control.TodoManager
+import com.exxeta.showcase.todo.control.TodoService
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.TodoCreateRequestDto
 import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
@@ -22,7 +22,7 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
 @Path("todos")
-class TodoResource(private val todoManager: TodoManager) {
+class TodoResource(private val todoService: TodoService) {
 
     @GET
     @ReactiveTransactional
@@ -35,7 +35,7 @@ class TodoResource(private val todoManager: TodoManager) {
         ]
     )
     fun getAll(): Uni<List<TodoResponseDto>> {
-        return todoManager.getAll()
+        return todoService.getAll()
     }
 
     @GET
@@ -50,7 +50,7 @@ class TodoResource(private val todoManager: TodoManager) {
         ]
     )
     fun getTodoById(@PathParam("id") id: UUID): Uni<TodoResponseDto> {
-        return todoManager.getTodoById(id)
+        return todoService.getTodoById(id)
     }
 
     @DELETE
@@ -65,7 +65,7 @@ class TodoResource(private val todoManager: TodoManager) {
         ]
     )
     fun deleteTodoById(@PathParam("id") id: UUID): Uni<UUID> {
-        return todoManager.deleteTodoById(id)
+        return todoService.deleteTodoById(id)
     }
 
     @POST
@@ -80,7 +80,7 @@ class TodoResource(private val todoManager: TodoManager) {
         ]
     )
     fun createTodo(dto: TodoCreateRequestDto): Uni<TodoResponseDto> {
-        return todoManager.createTodo(dto)
+        return todoService.createTodo(dto)
     }
 
     @PUT
@@ -97,6 +97,6 @@ class TodoResource(private val todoManager: TodoManager) {
         ]
     )
     fun updateTodo(@PathParam("id") id: UUID, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
-        return todoManager.updateTodo(id, dto)
+        return todoService.updateTodo(id, dto)
     }
 }

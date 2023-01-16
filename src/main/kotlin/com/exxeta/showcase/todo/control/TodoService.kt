@@ -12,7 +12,7 @@ import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 @ApplicationScoped
-class TodoManager(
+class TodoService(
     private val todoRepository: TodoRepository,
     private val todoMapper: TodoMapper,
     private val logger: Logger,

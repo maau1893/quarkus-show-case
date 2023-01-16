@@ -2,7 +2,7 @@ package com.exxeta.showcase.message.control
 
 import com.exxeta.showcase.message.MessageType
 import com.exxeta.showcase.message.api.MessagePublisher
-import com.exxeta.showcase.message.api.MessageService
+import com.exxeta.showcase.message.api.MessageClient
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.mockk.every
 import io.mockk.mockk
@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 
 @Suppress("ReactiveStreamsUnusedPublisher")
-internal class MessageManagerTest {
+internal class MessageServiceTest {
 
-    private lateinit var messageManager: MessageManager
+    private lateinit var messageManager: MessageService
 
-    private lateinit var messageService: MessageService
+    private lateinit var messageService: MessageClient
 
     private lateinit var messagePublisher: MessagePublisher
 
@@ -27,7 +27,7 @@ internal class MessageManagerTest {
         messageService = mockk()
         messagePublisher = mockk()
         messageManager =
-            MessageManager(messageService, messagePublisher, LoggerFactory.getLogger(MessageManager::class.java))
+            MessageService(messageService, messagePublisher, LoggerFactory.getLogger(MessageService::class.java))
     }
 
     @Test

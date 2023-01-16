@@ -2,7 +2,7 @@ package com.exxeta.showcase.message.control
 
 import com.exxeta.showcase.message.MessageType
 import com.exxeta.showcase.message.api.MessagePublisher
-import com.exxeta.showcase.message.api.MessageService
+import com.exxeta.showcase.message.api.MessageClient
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.smallrye.mutiny.Uni
 import org.eclipse.microprofile.rest.client.inject.RestClient
@@ -10,8 +10,8 @@ import org.slf4j.Logger
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
-class MessageManager(
-    @RestClient private val messageService: MessageService,
+class MessageService(
+    @RestClient private val messageClient: MessageClient,
     private val messagePublisher: MessagePublisher,
     private val logger: Logger,
 ) {
@@ -28,7 +28,7 @@ class MessageManager(
         return when (messageType) {
             MessageType.REST -> {
                 logger.info("Sending REST message $content to dummy service")
-                messageService.sendMessage(dto)
+                messageClient.sendMessage(dto)
             }
             MessageType.KAFKA -> messagePublisher.sendMessage(dto)
         }

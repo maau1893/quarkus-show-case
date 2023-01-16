@@ -1,7 +1,7 @@
 package com.exxeta.showcase.message.api
 
 import com.exxeta.showcase.common.model.ApiDescriptions
-import com.exxeta.showcase.message.control.MessageManager
+import com.exxeta.showcase.message.control.MessageService
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.smallrye.mutiny.Uni
 import org.eclipse.microprofile.openapi.annotations.Operation
@@ -14,7 +14,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.core.MediaType
 
 @Path("message")
-class MessageResource(private val messageManager: MessageManager, private val logger: Logger) {
+class MessageResource(private val messageService: MessageService, private val logger: Logger) {
 
     @POST
     @Path("/from-dummy")
@@ -23,7 +23,7 @@ class MessageResource(private val messageManager: MessageManager, private val lo
     @Operation(description = ApiDescriptions.POST_FROM_DUMMY)
     fun logMessage(dto: MessageRequestDto): Uni<Void> {
         logger.info("Incoming message received")
-        return messageManager.handleIncomingMessage(dto)
+        return messageService.handleIncomingMessage(dto)
     }
 
     @POST
@@ -38,6 +38,6 @@ class MessageResource(private val messageManager: MessageManager, private val lo
     @Operation(description = ApiDescriptions.POST_TO_DUMMY)
     fun sendMessageToDummyService(dto: MessageRequestDto): Uni<Void> {
         logger.info("Outgoing message received")
-        return messageManager.sendOutgoingMessage(dto)
+        return messageService.sendOutgoingMessage(dto)
     }
 }

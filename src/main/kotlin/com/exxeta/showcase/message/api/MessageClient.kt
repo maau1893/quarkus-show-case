@@ -8,7 +8,7 @@ import javax.ws.rs.Path
 
 @Path("message")
 @RegisterRestClient(configKey = "dummy-api")
-interface MessageService {
+interface MessageClient {
 
     @POST
     @Path("/from-show-case")

@@ -1,7 +1,7 @@
 package com.exxeta.showcase.message.api
 
 import com.exxeta.showcase.message.MessageType
-import com.exxeta.showcase.message.control.MessageManager
+import com.exxeta.showcase.message.control.MessageService
 import com.exxeta.showcase.message.model.MessageRequestDto
 import io.mockk.every
 import io.mockk.verify
@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response
 internal class MessageResourceTest {
 
     @InjectMock
-    private lateinit var messageManager: MessageManager
+    private lateinit var messageService: MessageService
 
     @Test
     fun logMessage() {
@@ -31,7 +31,7 @@ internal class MessageResourceTest {
 
         val response = Uni.createFrom().voidItem()
 
-        every { messageManager.handleIncomingMessage(dto) } returns response
+        every { messageService.handleIncomingMessage(dto) } returns response
 
         Given {
             body(dto)
@@ -46,7 +46,7 @@ internal class MessageResourceTest {
 
         subscriber.assertCompleted()
 
-        verify { messageManager.handleIncomingMessage(dto) }
+        verify { messageService.handleIncomingMessage(dto) }
     }
 
     @Test
@@ -55,7 +55,7 @@ internal class MessageResourceTest {
 
         val response = Uni.createFrom().voidItem()
 
-        every { messageManager.sendOutgoingMessage(dto) } returns response
+        every { messageService.sendOutgoingMessage(dto) } returns response
 
         Given {
             body(dto)
@@ -70,6 +70,6 @@ internal class MessageResourceTest {
 
         subscriber.assertCompleted()
 
-        verify { messageManager.sendOutgoingMessage(dto) }
+        verify { messageService.sendOutgoingMessage(dto) }
     }
 }

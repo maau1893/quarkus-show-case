@@ -1,6 +1,6 @@
 package com.exxeta.showcase.todo.api
 
-import com.exxeta.showcase.todo.control.TodoManager
+import com.exxeta.showcase.todo.control.TodoService
 import com.exxeta.showcase.todo.model.TodoCreateRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
@@ -35,14 +35,14 @@ internal class TodoResourceTest {
     )
 
     @InjectMock
-    private lateinit var todoManager: TodoManager
+    private lateinit var todoService: TodoService
 
 
     @Test
     fun getAll() {
         val expected = listOf(todoResponseDto)
 
-        every { todoManager.getAll() } returns Uni.createFrom().item(expected)
+        every { todoService.getAll() } returns Uni.createFrom().item(expected)
 
         val result = When {
             get()
@@ -53,7 +53,7 @@ internal class TodoResourceTest {
             jsonPath().getList(".", TodoResponseDto::class.java)
         }
 
-        verify { todoManager.getAll() }
+        verify { todoService.getAll() }
 
         Assertions.assertEquals(expected, result)
     }
@@ -64,7 +64,7 @@ internal class TodoResourceTest {
 
         val response = Uni.createFrom().item(todoResponseDto)
 
-        every { todoManager.getTodoById(id) } returns response
+        every { todoService.getTodoById(id) } returns response
 
         val result = When {
             get(id.toString())
@@ -75,7 +75,7 @@ internal class TodoResourceTest {
             `as`(TodoResponseDto::class.java)
         }
 
-        verify { todoManager.getTodoById(id) }
+        verify { todoService.getTodoById(id) }
 
         Assertions.assertEquals(todoResponseDto, result)
     }
@@ -84,7 +84,7 @@ internal class TodoResourceTest {
     fun deleteTodoById() {
         val id = UUID.randomUUID()
 
-        every { todoManager.deleteTodoById(id) } returns Uni.createFrom().item(id)
+        every { todoService.deleteTodoById(id) } returns Uni.createFrom().item(id)
 
         val result = When {
             delete("{id}", id)
@@ -95,7 +95,7 @@ internal class TodoResourceTest {
             `as`(UUID::class.java)
         }
 
-        verify { todoManager.deleteTodoById(id) }
+        verify { todoService.deleteTodoById(id) }
 
         Assertions.assertEquals(id, result)
     }
@@ -104,7 +104,7 @@ internal class TodoResourceTest {
     fun createTodo() {
         val requestDto = TodoCreateRequestDto(description = "Test description")
 
-        every { todoManager.createTodo(requestDto) } returns Uni.createFrom().item(todoResponseDto)
+        every { todoService.createTodo(requestDto) } returns Uni.createFrom().item(todoResponseDto)
 
         val result = Given {
             body(requestDto)
@@ -118,7 +118,7 @@ internal class TodoResourceTest {
             `as`(TodoResponseDto::class.java)
         }
 
-        verify { todoManager.createTodo(requestDto) }
+        verify { todoService.createTodo(requestDto) }
 
         Assertions.assertEquals(todoResponseDto, result)
     }
@@ -137,7 +137,7 @@ internal class TodoResourceTest {
             updatedAt = LocalDateTime.now()
         )
 
-        every { todoManager.updateTodo(id, requestDto) } returns Uni.createFrom().item(responseDto)
+        every { todoService.updateTodo(id, requestDto) } returns Uni.createFrom().item(responseDto)
 
         val result = Given {
             body(requestDto)
@@ -151,7 +151,7 @@ internal class TodoResourceTest {
             `as`(TodoResponseDto::class.java)
         }
 
-        verify { todoManager.updateTodo(id, requestDto) }
+        verify { todoService.updateTodo(id, requestDto) }
 
         Assertions.assertEquals(responseDto, result)
     }

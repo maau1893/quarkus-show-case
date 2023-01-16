@@ -22,9 +22,9 @@ import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 @Suppress("ReactiveStreamsUnusedPublisher")
-internal class TodoManagerTest {
+internal class TodoServiceTest {
 
-    private lateinit var todoManager: TodoManager
+    private lateinit var todoService: TodoService
 
     private lateinit var todoRepository: TodoRepository
 
@@ -42,7 +42,7 @@ internal class TodoManagerTest {
     fun beforeEach() {
         todoRepository = mockk()
         todoMapper = mockk(relaxed = true)
-        todoManager = TodoManager(todoRepository, todoMapper, LoggerFactory.getLogger(TodoManager::class.java))
+        todoService = TodoService(todoRepository, todoMapper, LoggerFactory.getLogger(TodoService::class.java))
     }
 
     @AfterEach
@@ -60,7 +60,7 @@ internal class TodoManagerTest {
         every { todoRepository.findAll() } returns queryMock
         every { queryMock.stream() } returns Multi.createFrom().items(todo, todo)
 
-        val subscriber = todoManager.getAll().subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.getAll().subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
 
@@ -76,7 +76,7 @@ internal class TodoManagerTest {
 
         every { todoRepository.findById(todo.id) } returns Uni.createFrom().item(todo)
 
-        val subscriber = todoManager.getTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.getTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
 
@@ -90,7 +90,7 @@ internal class TodoManagerTest {
     fun `deleteTodoById with success`() {
         every { todoRepository.deleteById(todo.id) } returns Uni.createFrom().item(true)
 
-        val subscriber = todoManager.deleteTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.deleteTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
 
@@ -101,7 +101,7 @@ internal class TodoManagerTest {
     fun `deleteTodoById with failure`() {
         every { todoRepository.deleteById(todo.id) } returns Uni.createFrom().item(false)
 
-        val subscriber = todoManager.deleteTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.deleteTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertFailedWith(NotFoundException::class.java)
     }
@@ -114,7 +114,7 @@ internal class TodoManagerTest {
         every { todoMapper.toEntity(dto) } returns todo
         every { todoRepository.persistAndFlush(todo) } returns Uni.createFrom().item(todo)
 
-        val subscriber = todoManager.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
 
@@ -129,7 +129,7 @@ internal class TodoManagerTest {
         every { todoRepository.persistAndFlush(todo) } returns Uni.createFrom()
             .failure(IllegalStateException("Test exception"))
 
-        val subscriber = todoManager.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertFailedWith(InternalServerErrorException::class.java)
 
@@ -144,7 +144,7 @@ internal class TodoManagerTest {
         every { todoMapper.toEntity(dto) } returns todo
         every { todoRepository.updateAndFlush(todo.id, todo) } returns Uni.createFrom().item(todo)
 
-        val subscriber = todoManager.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
 
@@ -158,7 +158,7 @@ internal class TodoManagerTest {
         every { todoMapper.toEntity(dto) } returns todo
         every { todoRepository.updateAndFlush(todo.id, todo) } returns Uni.createFrom().failure(NotFoundException("Entity not found"))
 
-        val subscriber = todoManager.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+        val subscriber = todoService.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertFailedWith(InternalServerErrorException::class.java)
 
