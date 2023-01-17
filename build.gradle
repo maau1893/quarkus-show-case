@@ -49,8 +49,6 @@ dependencies {
 
     testImplementation "io.smallrye.reactive:smallrye-reactive-messaging-in-memory:$reactive_messaging_in_memory_version"
 
-    testImplementation 'io.quarkus:quarkus-test-h2'
-
     testImplementation "io.quarkiverse.mockk:quarkus-junit5-mockk:$quarkus_mockk_version"
 }
 
@@ -62,14 +60,8 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-test {
-    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
-}
-
 allOpen {
-    annotation("javax.ws.rs.Path")
-    annotation("javax.enterprise.context.ApplicationScoped")
-    annotation("io.quarkus.test.junit.QuarkusTest")
+    annotation("javax.persistence.Entity")
 }
 
 compileKotlin {

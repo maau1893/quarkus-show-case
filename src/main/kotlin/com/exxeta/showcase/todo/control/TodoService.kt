@@ -1,17 +1,20 @@
 package com.exxeta.showcase.todo.control
 
-import com.exxeta.showcase.todo.model.TodoCreateRequestDto
+import com.exxeta.showcase.common.control.logAndFailWith
+import com.exxeta.showcase.todo.model.CreateTodoRequestDto
+import com.exxeta.showcase.todo.model.Todo
 import com.exxeta.showcase.todo.model.TodoResponseDto
-import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
+import com.exxeta.showcase.todo.model.UpdateTodoRequestDto
+import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.unchecked.Unchecked
 import org.slf4j.Logger
 import java.util.UUID
 import javax.enterprise.context.ApplicationScoped
-import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 @ApplicationScoped
+@ReactiveTransactional
 class TodoService(
     private val todoRepository: TodoRepository,
     private val todoMapper: TodoMapper,
@@ -19,54 +22,49 @@ class TodoService(
 ) {
 
     fun getAll(): Uni<List<TodoResponseDto>> {
-        logger.info("Requesting all Todos")
+        logger.info("Requesting all ${Todo.tag} entities")
         return todoRepository.findAll().stream()
             .map(todoMapper::toResponseDto)
             .collect().asList().invoke { result -> logger.info("Found ${result.size} results") }
     }
 
     fun getTodoById(id: UUID): Uni<TodoResponseDto> {
-        logger.info("Requesting Todo with id $id")
-        return todoRepository.findById(id).map(todoMapper::toResponseDto)
-            .invoke { _ -> logger.info("Todo for id $id successfully found") }
-            .onFailure().transform {
-                logger.error("Failed to fetch Todo with id $id", it)
-                NotFoundException("Todo with id $id does not exist")
-            }
+        logger.info("Requesting ${Todo.tag} with id $id")
+        return todoRepository.findById(id).onItem().ifNull()
+            .logAndFailWith(logger, NotFoundException("${Todo.tag} with id $id does not exist"))
+            .onItem().ifNotNull().transform(todoMapper::toResponseDto)
+            .invoke { _ -> logger.info("${Todo.tag} for id $id successfully found") }
     }
 
     fun deleteTodoById(id: UUID): Uni<UUID> {
-        logger.info("Attempting to delete Todo with id $id")
+        logger.info("Attempting to delete ${Todo.tag} with id $id")
         return todoRepository.deleteById(id)
             .onItem()
             .invoke(Unchecked.consumer { result ->
                 if (!result) {
-                    logger.error("Failed to delete Todo with id $id")
-                    throw NotFoundException("Todo with id $id does not exist")
+                    val message = "${Todo.tag} with id $id does not exist"
+                    logger.error(message)
+                    throw NotFoundException(message)
                 }
             })
             .onItem()
             .transform { id }
-            .invoke { _ -> logger.info("Todo with id $id successfully deleted") }
+            .invoke { _ -> logger.info("${Todo.tag} with id $id successfully deleted") }
     }
 
-    fun createTodo(dto: TodoCreateRequestDto): Uni<TodoResponseDto> {
-        logger.info("Attempting to create Todo")
+    fun createTodo(dto: CreateTodoRequestDto): Uni<TodoResponseDto> {
+        logger.info("Attempting to create ${Todo.tag}")
         return todoRepository.persistAndFlush(todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
-            .invoke { todo -> logger.info("Todo successfully created with id ${todo.id}") }
-            .onFailure().transform {
-                logger.error("Failed to create Todo", it)
-                InternalServerErrorException("Failed to create Todo")
-            }
+            .invoke { todo -> logger.info("${Todo.tag} successfully created with id ${todo.id}") }
     }
 
-    fun updateTodo(id: UUID, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
-        logger.info("Attempting to update Todo with id $id")
-        return todoRepository.updateAndFlush(id, todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
-            .invoke { _ -> logger.info("Todo with id $id successfully updated") }
-            .onFailure().transform {
-                logger.error("Failed to update Todo with id $id", it)
-                InternalServerErrorException("Failed to update Todo with id $id")
-            }
+    fun updateTodo(id: UUID, dto: UpdateTodoRequestDto): Uni<TodoResponseDto> {
+        logger.info("Attempting to update ${Todo.tag} with id $id")
+        return todoRepository.findById(id).onItem().ifNull()
+            .logAndFailWith(logger, NotFoundException("${Todo.tag} with id $id not found"))
+            .onItem().ifNotNull()
+            .transform { entity -> entity.copy(todoMapper.toEntity(dto)) }
+            .map(todoMapper::toResponseDto)
+            .invoke { _ -> logger.info("${Todo.tag} with id $id successfully updated") }
     }
 }

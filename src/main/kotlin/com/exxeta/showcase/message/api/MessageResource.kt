@@ -14,12 +14,12 @@ import javax.ws.rs.Path
 import javax.ws.rs.core.MediaType
 
 @Path("message")
+@Consumes(MediaType.APPLICATION_JSON)
 class MessageResource(private val messageService: MessageService, private val logger: Logger) {
 
     @POST
     @Path("/from-dummy")
     @APIResponse(responseCode = "200")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.POST_FROM_DUMMY)
     fun logMessage(dto: MessageRequestDto): Uni<Void> {
         logger.info("Incoming message received")
@@ -34,7 +34,6 @@ class MessageResource(private val messageService: MessageService, private val lo
             APIResponse(responseCode = "500")
         ]
     )
-    @Consumes(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.POST_TO_DUMMY)
     fun sendMessageToDummyService(dto: MessageRequestDto): Uni<Void> {
         logger.info("Outgoing message received")

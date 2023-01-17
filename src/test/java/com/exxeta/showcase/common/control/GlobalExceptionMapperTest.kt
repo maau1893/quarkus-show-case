@@ -9,13 +9,13 @@ import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 import javax.ws.rs.core.Response
 
-internal class GlobalExceptionHandlerTest {
+internal class GlobalExceptionMapperTest {
 
-    private lateinit var handler: GlobalExceptionHandler
+    private lateinit var handler: GlobalExceptionMapper
 
     @BeforeEach
     fun setUp() {
-        handler = GlobalExceptionHandler(LoggerFactory.getLogger(GlobalExceptionHandler::class.java))
+        handler = GlobalExceptionMapper(LoggerFactory.getLogger(GlobalExceptionMapper::class.java))
     }
 
     @Test

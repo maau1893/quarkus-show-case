@@ -1,13 +1,13 @@
 package com.exxeta.showcase.todo.control
 
 import com.exxeta.showcase.todo.model.Todo
-import com.exxeta.showcase.todo.model.TodoCreateRequestDto
+import com.exxeta.showcase.todo.model.CreateTodoRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
-import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
+import com.exxeta.showcase.todo.model.UpdateTodoRequestDto
 import io.quarkus.test.junit.QuarkusTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Inject
 
@@ -20,8 +20,8 @@ internal class TodoMapperTest {
     @Test
     fun toResponseDto() {
         val id = UUID.randomUUID()
-        val createdAt = LocalDateTime.now()
-        val updatedAt = LocalDateTime.now()
+        val createdAt = ZonedDateTime.now()
+        val updatedAt = ZonedDateTime.now()
         val description = "Test description"
         val expected = TodoResponseDto(
             id = id,
@@ -43,7 +43,7 @@ internal class TodoMapperTest {
 
     @Test
     fun `toEntity from TodoCreateRequestDto`() {
-        val requestDto = TodoCreateRequestDto("Test description")
+        val requestDto = CreateTodoRequestDto("Test description")
 
         val result = todoMapper.toEntity(requestDto)
 
@@ -52,7 +52,7 @@ internal class TodoMapperTest {
 
     @Test
     fun `toEntity from TodoUpdateRequestDto`() {
-        val updateDto = TodoUpdateRequestDto("Test description update", isDone = true)
+        val updateDto = UpdateTodoRequestDto("Test description update", isDone = true)
 
         val result = todoMapper.toEntity(updateDto)
 

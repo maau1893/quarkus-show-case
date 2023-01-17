@@ -11,11 +11,11 @@ quarkus:
     change-log: db/changeLog.yaml
     validate-on-migrate: false
   log:
-    category: "org.jboss.resteasy.reactive.server.handlers.ParameterHandler"
     level: INFO
   rest-client:
     dummy-api:
       url: localhost:3000
+  default-locale: en-US
 
 mp:
   messaging:

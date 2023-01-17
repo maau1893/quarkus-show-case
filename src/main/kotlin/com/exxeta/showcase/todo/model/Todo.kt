@@ -3,7 +3,7 @@ package com.exxeta.showcase.todo.model
 import io.quarkus.runtime.annotations.RegisterForReflection
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -29,9 +29,20 @@ class Todo {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    lateinit var createdAt: LocalDateTime
+    lateinit var createdAt: ZonedDateTime
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    lateinit var updatedAt: LocalDateTime
+    lateinit var updatedAt: ZonedDateTime
+
+    fun copy(other: Todo): Todo {
+        this.description = other.description
+        this.isDone = other.isDone
+        return this
+    }
+
+    companion object {
+
+        val tag: String? = Todo::class.simpleName
+    }
 }

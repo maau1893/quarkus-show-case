@@ -16,18 +16,18 @@ import org.slf4j.LoggerFactory
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class MessageServiceTest {
 
-    private lateinit var messageManager: MessageService
+    private lateinit var messageService: MessageService
 
-    private lateinit var messageService: MessageClient
+    private lateinit var messageClient: MessageClient
 
     private lateinit var messagePublisher: MessagePublisher
 
     @BeforeEach
     fun beforeEach() {
-        messageService = mockk()
+        messageClient = mockk()
         messagePublisher = mockk()
-        messageManager =
-            MessageService(messageService, messagePublisher, LoggerFactory.getLogger(MessageService::class.java))
+        messageService =
+            MessageService(messageClient, messagePublisher, LoggerFactory.getLogger(MessageService::class.java))
     }
 
     @Test
@@ -35,7 +35,7 @@ internal class MessageServiceTest {
         val dto = MessageRequestDto(content = "Test content", messageType = MessageType.KAFKA)
 
         val subscriber =
-            messageManager.handleIncomingMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+            messageService.handleIncomingMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
     }
@@ -46,12 +46,12 @@ internal class MessageServiceTest {
 
         val expected = Uni.createFrom().voidItem()
 
-        every { messageService.sendMessage(dto) } returns expected
+        every { messageClient.sendMessage(dto) } returns expected
 
         val subscriber =
-            messageManager.sendOutgoingMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+            messageService.sendOutgoingMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
-        verify { messageService.sendMessage(dto) }
+        verify { messageClient.sendMessage(dto) }
         verify(inverse = true) { messagePublisher.sendMessage(dto) }
 
         subscriber.assertCompleted()
@@ -66,10 +66,10 @@ internal class MessageServiceTest {
         every { messagePublisher.sendMessage(dto) } returns expected
 
         val subscriber =
-            messageManager.sendOutgoingMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
+            messageService.sendOutgoingMessage(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         verify { messagePublisher.sendMessage(dto) }
-        verify(inverse = true) { messageService.sendMessage(dto) }
+        verify(inverse = true) { messageClient.sendMessage(dto) }
 
         subscriber.assertCompleted()
     }

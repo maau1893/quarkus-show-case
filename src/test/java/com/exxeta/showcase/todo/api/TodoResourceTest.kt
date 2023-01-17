@@ -1,9 +1,9 @@
 package com.exxeta.showcase.todo.api
 
 import com.exxeta.showcase.todo.control.TodoService
-import com.exxeta.showcase.todo.model.TodoCreateRequestDto
+import com.exxeta.showcase.todo.model.CreateTodoRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
-import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
+import com.exxeta.showcase.todo.model.UpdateTodoRequestDto
 import io.mockk.every
 import io.mockk.verify
 import io.quarkiverse.test.junit.mockk.InjectMock
@@ -16,7 +16,7 @@ import io.restassured.module.kotlin.extensions.When
 import io.smallrye.mutiny.Uni
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -30,8 +30,8 @@ internal class TodoResourceTest {
         id = UUID.randomUUID(),
         description = "Test description",
         isDone = false,
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now(),
+        createdAt = ZonedDateTime.now(),
+        updatedAt = ZonedDateTime.now(),
     )
 
     @InjectMock
@@ -102,7 +102,7 @@ internal class TodoResourceTest {
 
     @Test
     fun createTodo() {
-        val requestDto = TodoCreateRequestDto(description = "Test description")
+        val requestDto = CreateTodoRequestDto(description = "Test description")
 
         every { todoService.createTodo(requestDto) } returns Uni.createFrom().item(todoResponseDto)
 
@@ -127,14 +127,14 @@ internal class TodoResourceTest {
     fun updateTodo() {
         val id = todoResponseDto.id
 
-        val requestDto = TodoUpdateRequestDto(description = "Test description 2", isDone = true)
+        val requestDto = UpdateTodoRequestDto(description = "Test description 2", isDone = true)
 
         val responseDto = TodoResponseDto(
             id = todoResponseDto.id,
             description = requestDto.description,
             isDone = requestDto.isDone,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = ZonedDateTime.now(),
+            updatedAt = ZonedDateTime.now()
         )
 
         every { todoService.updateTodo(id, requestDto) } returns Uni.createFrom().item(responseDto)

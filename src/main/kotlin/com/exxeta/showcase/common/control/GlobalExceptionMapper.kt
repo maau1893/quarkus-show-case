@@ -7,9 +7,9 @@ import javax.ws.rs.ext.ExceptionMapper
 import javax.ws.rs.ext.Provider
 
 @Provider
-class GlobalExceptionHandler(private val logger: Logger) : ExceptionMapper<Exception> {
+class GlobalExceptionMapper(private val logger: Logger) : ExceptionMapper<Exception> {
 
-    override fun toResponse(exception: Exception?): Response {
+    override fun toResponse(exception: Exception): Response {
         if (exception is WebApplicationException) {
             val exceptionResponse = exception.response
             return Response.status(exceptionResponse.status)

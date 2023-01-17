@@ -3,14 +3,14 @@ package com.exxeta.showcase.todo.api
 import com.exxeta.showcase.common.model.ApiDescriptions
 import com.exxeta.showcase.todo.control.TodoService
 import com.exxeta.showcase.todo.model.TodoResponseDto
-import com.exxeta.showcase.todo.model.TodoCreateRequestDto
-import com.exxeta.showcase.todo.model.TodoUpdateRequestDto
-import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional
+import com.exxeta.showcase.todo.model.CreateTodoRequestDto
+import com.exxeta.showcase.todo.model.UpdateTodoRequestDto
 import io.smallrye.mutiny.Uni
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import java.util.UUID
+import javax.validation.Valid
 import javax.ws.rs.Consumes
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
@@ -22,11 +22,11 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
 @Path("todos")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class TodoResource(private val todoService: TodoService) {
 
     @GET
-    @ReactiveTransactional
-    @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.GET_TODOS)
     @APIResponses(
         value = [
@@ -40,8 +40,6 @@ class TodoResource(private val todoService: TodoService) {
 
     @GET
     @Path("{id}")
-    @ReactiveTransactional
-    @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.GET_TODO)
     @APIResponses(
         value = [
@@ -55,7 +53,6 @@ class TodoResource(private val todoService: TodoService) {
 
     @DELETE
     @Path("{id}")
-    @ReactiveTransactional
     @Operation(description = ApiDescriptions.DELETE_TODO)
     @APIResponses(
         value = [
@@ -69,9 +66,6 @@ class TodoResource(private val todoService: TodoService) {
     }
 
     @POST
-    @ReactiveTransactional
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.PUT_TODO)
     @APIResponses(
         value = [
@@ -79,15 +73,12 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "500")
         ]
     )
-    fun createTodo(dto: TodoCreateRequestDto): Uni<TodoResponseDto> {
+    fun createTodo(dto: @Valid CreateTodoRequestDto): Uni<TodoResponseDto> {
         return todoService.createTodo(dto)
     }
 
     @PUT
     @Path("{id}")
-    @ReactiveTransactional
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = ApiDescriptions.POST_TODO)
     @APIResponses(
         value = [
@@ -96,7 +87,7 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "500")
         ]
     )
-    fun updateTodo(@PathParam("id") id: UUID, dto: TodoUpdateRequestDto): Uni<TodoResponseDto> {
+    fun updateTodo(@PathParam("id") id: UUID, @Valid dto: UpdateTodoRequestDto): Uni<TodoResponseDto> {
         return todoService.updateTodo(id, dto)
     }
 }

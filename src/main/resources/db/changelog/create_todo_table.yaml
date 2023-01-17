@@ -21,6 +21,7 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: timestamp
+
         - addNotNullConstraint:
             constraintName: pk_not_null_todo_id
             columnName: id
@@ -57,6 +58,7 @@ databaseChangeLog:
             columnName: done
             defaultValueBoolean: false
             tableName: todo
+
       rollback:
         - dropTable:
             tableName: todo
