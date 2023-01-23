@@ -14,7 +14,6 @@ import javax.enterprise.context.ApplicationScoped
 import javax.ws.rs.NotFoundException
 
 @ApplicationScoped
-@ReactiveTransactional
 class TodoService(
     private val todoRepository: TodoRepository,
     private val todoMapper: TodoMapper,
@@ -36,6 +35,7 @@ class TodoService(
             .invoke { _ -> logger.info("${Todo.tag} for id $id successfully found") }
     }
 
+    @ReactiveTransactional
     fun deleteTodoById(id: UUID): Uni<UUID> {
         logger.info("Attempting to delete ${Todo.tag} with id $id")
         return todoRepository.deleteById(id)
@@ -52,12 +52,14 @@ class TodoService(
             .invoke { _ -> logger.info("${Todo.tag} with id $id successfully deleted") }
     }
 
+    @ReactiveTransactional
     fun createTodo(dto: CreateTodoRequestDto): Uni<TodoResponseDto> {
         logger.info("Attempting to create ${Todo.tag}")
-        return todoRepository.persistAndFlush(todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
+        return todoRepository.persist(todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
             .invoke { todo -> logger.info("${Todo.tag} successfully created with id ${todo.id}") }
     }
 
+    @ReactiveTransactional
     fun updateTodo(id: UUID, dto: UpdateTodoRequestDto): Uni<TodoResponseDto> {
         logger.info("Attempting to update ${Todo.tag} with id $id")
         return todoRepository.findById(id).onItem().ifNull()

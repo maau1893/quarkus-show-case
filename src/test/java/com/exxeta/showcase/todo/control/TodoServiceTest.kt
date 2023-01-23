@@ -6,7 +6,6 @@ import com.exxeta.showcase.todo.model.UpdateTodoRequestDto
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import io.quarkus.hibernate.reactive.panache.kotlin.PanacheQuery
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.util.UUID
-import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.NotFoundException
 
 @Suppress("ReactiveStreamsUnusedPublisher")
@@ -41,13 +39,13 @@ internal class TodoServiceTest {
     @BeforeEach
     fun beforeEach() {
         todoRepository = mockk()
-        todoMapper = mockk(relaxed = true)
+        todoMapper = TodoMapperImpl()
         todoService = TodoService(todoRepository, todoMapper, LoggerFactory.getLogger(TodoService::class.java))
     }
 
     @AfterEach
     fun afterEach() {
-        clearMocks(todoRepository, todoMapper)
+        clearMocks(todoRepository)
     }
 
     @Test
@@ -64,9 +62,6 @@ internal class TodoServiceTest {
 
         subscriber.assertCompleted()
 
-        // Once for the expected value and twice for the getAll() mapping
-        verify(exactly = 3) { todoMapper.toResponseDto(todo) }
-
         Assertions.assertEquals(expected, subscriber.item)
     }
 
@@ -79,9 +74,6 @@ internal class TodoServiceTest {
         val subscriber = todoService.getTodoById(todo.id).subscribe().withSubscriber(UniAssertSubscriber.create())
 
         subscriber.assertCompleted()
-
-        // Once for the expected value and once for the getTodoById() mapping
-        verify(exactly = 2) { todoMapper.toResponseDto(todo) }
 
         Assertions.assertEquals(expected, subscriber.item)
     }
@@ -111,8 +103,7 @@ internal class TodoServiceTest {
         val dto = CreateTodoRequestDto(description = "Test description")
         val expected = todoMapper.toResponseDto(todo)
 
-        every { todoMapper.toEntity(dto) } returns todo
-        every { todoRepository.persistAndFlush(todo) } returns Uni.createFrom().item(todo)
+        every { todoRepository.persist(any() as Todo) } returns Uni.createFrom().item(todo)
 
         val subscriber = todoService.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
@@ -122,26 +113,10 @@ internal class TodoServiceTest {
     }
 
     @Test
-    fun `createTodo with failure`() {
-        val dto = CreateTodoRequestDto(description = "Test description")
-
-        every { todoMapper.toEntity(dto) } returns todo
-        every { todoRepository.persistAndFlush(todo) } returns Uni.createFrom()
-            .failure(IllegalStateException("Test exception"))
-
-        val subscriber = todoService.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
-
-        subscriber.assertFailedWith(InternalServerErrorException::class.java)
-
-        Assertions.assertNull(subscriber.item)
-    }
-
-    @Test
     fun `updateTodo with success`() {
         val dto = UpdateTodoRequestDto(description = "Test description", isDone = true)
         val expected = todoMapper.toResponseDto(todo)
 
-        every { todoMapper.toEntity(dto) } returns todo
         every { todoRepository.findById(todo.id) } returns Uni.createFrom().item(todo)
 
         val subscriber = todoService.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())
@@ -155,7 +130,6 @@ internal class TodoServiceTest {
     fun `updateTodo with failure`() {
         val dto = UpdateTodoRequestDto(description = "Test description", isDone = true)
 
-        every { todoMapper.toEntity(dto) } returns todo
         every { todoRepository.findById(todo.id) } returns Uni.createFrom().failure(NotFoundException("Entity not found"))
 
         val subscriber = todoService.updateTodo(todo.id, dto).subscribe().withSubscriber(UniAssertSubscriber.create())

@@ -22,7 +22,7 @@ class Todo {
     lateinit var id: UUID
 
     @Column(name = "description")
-    var description: String = ""
+    lateinit var description: String
 
     @Column(name = "done")
     var isDone: Boolean = false

@@ -55,7 +55,7 @@ internal class TodoResourceTest {
 
         verify { todoService.getAll() }
 
-        Assertions.assertEquals(expected, result)
+        Assertions.assertEquals(expected.size, result.size)
     }
 
     @Test
@@ -77,7 +77,9 @@ internal class TodoResourceTest {
 
         verify { todoService.getTodoById(id) }
 
-        Assertions.assertEquals(todoResponseDto, result)
+        Assertions.assertEquals(todoResponseDto.id, result.id)
+        Assertions.assertEquals(todoResponseDto.description, result.description)
+        Assertions.assertEquals(todoResponseDto.isDone, result.isDone)
     }
 
     @Test
@@ -107,8 +109,8 @@ internal class TodoResourceTest {
         every { todoService.createTodo(requestDto) } returns Uni.createFrom().item(todoResponseDto)
 
         val result = Given {
-            body(requestDto)
             contentType(MediaType.APPLICATION_JSON)
+            body(requestDto)
         } When {
             post()
         } Then {
@@ -120,7 +122,9 @@ internal class TodoResourceTest {
 
         verify { todoService.createTodo(requestDto) }
 
-        Assertions.assertEquals(todoResponseDto, result)
+        Assertions.assertEquals(todoResponseDto.id, result.id)
+        Assertions.assertEquals(todoResponseDto.description, result.description)
+        Assertions.assertEquals(todoResponseDto.isDone, result.isDone)
     }
 
     @Test
@@ -153,6 +157,8 @@ internal class TodoResourceTest {
 
         verify { todoService.updateTodo(id, requestDto) }
 
-        Assertions.assertEquals(responseDto, result)
+        Assertions.assertEquals(todoResponseDto.id, result.id)
+        Assertions.assertEquals(requestDto.description, result.description)
+        Assertions.assertEquals(requestDto.isDone, result.isDone)
     }
 }

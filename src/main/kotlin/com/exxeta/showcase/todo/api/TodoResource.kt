@@ -22,8 +22,6 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 
 @Path("todos")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 class TodoResource(private val todoService: TodoService) {
 
     @GET
@@ -34,6 +32,7 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "204")
         ]
     )
+    @Produces(MediaType.APPLICATION_JSON)
     fun getAll(): Uni<List<TodoResponseDto>> {
         return todoService.getAll()
     }
@@ -47,6 +46,7 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "404")
         ]
     )
+    @Produces(MediaType.APPLICATION_JSON)
     fun getTodoById(@PathParam("id") id: UUID): Uni<TodoResponseDto> {
         return todoService.getTodoById(id)
     }
@@ -73,7 +73,9 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "500")
         ]
     )
-    fun createTodo(dto: @Valid CreateTodoRequestDto): Uni<TodoResponseDto> {
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    fun createTodo(@Valid dto: CreateTodoRequestDto): Uni<TodoResponseDto> {
         return todoService.createTodo(dto)
     }
 
@@ -87,6 +89,8 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "500")
         ]
     )
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     fun updateTodo(@PathParam("id") id: UUID, @Valid dto: UpdateTodoRequestDto): Uni<TodoResponseDto> {
         return todoService.updateTodo(id, dto)
     }
