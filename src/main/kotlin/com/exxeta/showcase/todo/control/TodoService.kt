@@ -55,7 +55,7 @@ class TodoService(
     @ReactiveTransactional
     fun createTodo(dto: CreateTodoRequestDto): Uni<TodoResponseDto> {
         logger.info("Attempting to create ${Todo.tag}")
-        return todoRepository.persist(todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
+        return todoRepository.persistAndFlush(todoMapper.toEntity(dto)).map(todoMapper::toResponseDto)
             .invoke { todo -> logger.info("${Todo.tag} successfully created with id ${todo.id}") }
     }
 

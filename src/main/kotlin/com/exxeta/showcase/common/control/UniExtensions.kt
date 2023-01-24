@@ -5,6 +5,8 @@ import io.smallrye.mutiny.groups.UniOnNull
 import org.slf4j.Logger
 
 fun <T> UniOnNull<T>.logAndFailWith(logger: Logger, throwable: Throwable): Uni<T> {
-    logger.error(throwable.message)
-    return this.failWith(throwable)
+    return this.failWith {
+        logger.error(throwable.message)
+        throwable
+    }
 }
