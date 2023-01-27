@@ -66,22 +66,22 @@ class TodoResource(private val todoService: TodoService) {
     }
 
     @POST
-    @Operation(description = ApiDescriptions.PUT_TODO)
+    @Operation(description = ApiDescriptions.POST_TODO)
     @APIResponses(
         value = [
             APIResponse(responseCode = "200"),
             APIResponse(responseCode = "500")
         ]
     )
-    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     fun createTodo(@Valid dto: CreateTodoRequestDto): Uni<TodoResponseDto> {
         return todoService.createTodo(dto)
     }
 
     @PUT
     @Path("{id}")
-    @Operation(description = ApiDescriptions.POST_TODO)
+    @Operation(description = ApiDescriptions.PUT_TODO)
     @APIResponses(
         value = [
             APIResponse(responseCode = "200"),
@@ -89,8 +89,8 @@ class TodoResource(private val todoService: TodoService) {
             APIResponse(responseCode = "500")
         ]
     )
-    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     fun updateTodo(@PathParam("id") id: UUID, @Valid dto: UpdateTodoRequestDto): Uni<TodoResponseDto> {
         return todoService.updateTodo(id, dto)
     }
