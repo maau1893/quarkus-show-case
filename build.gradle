@@ -27,6 +27,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-config-yaml'
 
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_module_kotlin_version"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_module_kotlin_version"
+
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
