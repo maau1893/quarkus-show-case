@@ -4,18 +4,20 @@ import com.exxeta.showcase.todo.model.Todo
 import com.exxeta.showcase.todo.model.CreateTodoRequestDto
 import com.exxeta.showcase.todo.model.TodoResponseDto
 import com.exxeta.showcase.todo.model.UpdateTodoRequestDto
-import io.quarkus.test.junit.QuarkusTest
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.ZonedDateTime
 import java.util.UUID
-import javax.inject.Inject
 
-@QuarkusTest
 internal class TodoMapperTest {
 
-    @Inject
     private lateinit var todoMapper: TodoMapper
+
+    @BeforeEach
+    fun beforeEach() {
+        todoMapper = TodoMapperImpl()
+    }
 
     @Test
     fun toResponseDto() {

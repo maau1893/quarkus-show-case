@@ -54,6 +54,7 @@ databaseChangeLog:
             columnDataType: timestamp
             columnName: updated_at
             tableName: todo
+
         - addDefaultValue:
             columnName: done
             defaultValueBoolean: false
