@@ -6,13 +6,6 @@ quarkus:
       url: postgresql://localhost:5436/postgres
     username: postgres
     password: postgres
-    devservices:
-      enabled: true
-      image-name: postgres:12.2-alpine
-      db-name: RCT_DAS
-      username: RCT_DAS
-      password: RCT_DAS_PW
-      port: 5555
   liquibase:
     migrate-at-start: false
     change-log: db/changeLog.yaml
@@ -47,9 +40,16 @@ liquibase:
        db-kind: postgresql
        jdbc: false
        reactive:
-         url: postgresql://localhost:5555/RCT_DAS
-       username: RCT_DAS
-       password: RCT_DAS_PW
+         url: postgresql://localhost:5555/postgres
+       username: postgres
+       password: postgres
+       devservices:
+         enabled: true
+         image-name: postgres:12.2-alpine
+         db-name: postgres
+         username: postgres
+         password: postgres
+         port: 5555
 
    liquibase:
-     url: jdbc:postgresql://localhost:5555/RCT_DAS
+     url: jdbc:postgresql://localhost:5555/postgres
