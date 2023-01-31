@@ -103,7 +103,7 @@ internal class TodoServiceTest {
         val dto = CreateTodoRequestDto(description = "Test description")
         val expected = todoMapper.toResponseDto(todo)
 
-        every { todoRepository.persist(any() as Todo) } returns Uni.createFrom().item(todo)
+        every { todoRepository.persistAndFlush(any() as Todo) } returns Uni.createFrom().item(todo)
 
         val subscriber = todoService.createTodo(dto).subscribe().withSubscriber(UniAssertSubscriber.create())
 
